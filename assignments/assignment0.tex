@@ -1,0 +1,208 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+\begin{document}
+	
+	\begin{center}
+		\noindent\makebox[\textwidth][c]{\Large\bfseries Assignment 0}
+	\end{center}
+	\begin{center}
+		\noindent\makebox[\textwidth][c]{Grey Cole}
+	\end{center}
+	\vspace{-2em}
+	\begin{center}
+		\noindent\makebox[\textwidth][c]{January 22, 2026}
+	\end{center}
+	
+	\section{Big Oh Proofs}
+	\textbf{Big Oh Definition:}
+	To show that \(f(n) = O(g(n))\), you must show:
+	\begin{itemize}
+		\item There exist constants \(c > 0\) and an integer \(n_0 \ge 1\)
+		\item Such that for all \(n \ge n_0\): ~~\(f(n) \le c \cdot g(n)\)
+		\item And also: ~~\(0 \le f(n)\) for all \(n \ge n_0\)
+	\end{itemize}
+	\subsection{Prove \(20n + (n + 1)^3 + 10000 = O(n^3)\)}
+	\textbf{Proof:}
+	\begin{itemize}
+		\item \(f(n) = (n+1)^3\) ~~\textit{(Ignore slowest growing terms with \(n\))}
+		\item \(g(n) = n^3\)
+		\item Choose \(n_0 = 30\) and \(c = 2\)
+		\item For all \(n \ge n_0\), show both:
+		\begin{description}
+			\item[1.] \((n+1)^3 \le 2 \cdot n^3\)
+			\begin{description}
+				\item \(\frac{(n+1)^3}{n^3} \le 2\)
+				\item \(\frac{31^3}{30^3} \le 2\)
+				\item As \(n\) grows, the left hand side will get closer to 1
+			\end{description}
+			\item[2.] \(0 \le (n+1)^3\)
+			\begin{description}
+				\item \(0 \le 31^3\)
+				\item As \(n\) grows, the right hand side will grow larger
+			\end{description}
+		\end{description}
+		\item Because we have shown that the Big Oh Definition holds, the statement in question is valid.
+	\end{itemize}
+	\subsection{Prove \(20n + (n+1)^3 + 10000 = O(n^4)\)}
+	\textit{Skipped --- trivially similar to \textbf{1.1}}
+	\subsection{Disprove \(20n + (n + 1)^3 + 10000 = O(n)\)}
+	\begin{itemize}
+		\item \(f(n) = (n+1)^3\) ~~\textit{(Ignore slowest growing terms with \(n\))}
+		\item \(g(n) = n\)
+		\item Choose \(n_0 = 2\) and \(c = 1\)
+		\item Show that the inequality is false for all \(n \ge n_0\):
+		\begin{description}
+			\item \((n+1)^3 \le 2 \cdot n\) 
+			\item \(\frac{(n+1)^3}{n} \le 2\) 
+			\item \(\frac{(2+1)^3}{2} \le 2\)
+			\item \(13.5 \le 2\)
+			\item Contradiction; The inequality is false for \(n = n_0\)
+			\item As \(n\) grows, the left hand side will grow larger.
+		\end{description}
+		\item Because we have shown that the Big Oh Definition does not hold, the statement in question is invalid.
+	\end{itemize}
+	
+	\section{Runtime Complexity}
+	\subsection{Exact Runtime:}
+	\begin{verbatim}
+		res = 0                      <- 1
+		for i in 0 until k:          <- k
+		if mask[i] == T then:       <- 1
+		res += xs[i]            <- # of T in mask
+		return res
+	\end{verbatim}
+	Define $t$ as the number of \verb|T| inside of \verb|mask|.
+	The runtime of this algorithm is $k + tk + 1$ where $k$ is the input size. The initialization step costs 1, $k$ reads/comparisons occur, and the result is modified $tk$ times.
+	
+	\subsection{Upper Bound using $n$}
+	We can define $k = n$ if we consider all lists to be one long list of entries. Because we are calculating the upper bound, the largest possible value of $t$ is $k$. Using this, we can get our upper bound expression as $n + n + 1$ or $2n + 1$.
+	
+	\subsection{Big Oh Expression}
+	By only considering the dominant growth factor, we get the expression $O(n)$
+	
+	\subsection{Big Oh proof}
+	\textbf{Proof:} Using the Big Oh Definition,
+	\begin{itemize}
+		\item $f(n) = 2n + 1$
+		\item $g(n) = n$
+		\item Choose $n_0 = 4$ and $c = 5$
+		\begin{description}
+			\item[1.] $2n + 1 \le 5 \cdot n$
+			\begin{description}
+				\item[]   $\frac{2n}{n} + \frac{1}{n} \le 5$
+				\item[]   $2 + \frac{1}{n} \le 5$
+				\item[]   $\frac{1}{n} \le 3$
+				\item[]   $\frac{1}{4} \le 3$
+			\end{description}
+			\item     For all $n \ge n_0$ the left hand side will shrink closer to zero, thus the inequality will hold.
+			\item[2.] $0 \le 2n + 1$
+			\begin{description}
+				\item[]   $0 \le 2 \cdot 4 + 1$
+				\item[]   $0 \le 9$
+			\end{description}
+			\item     For all $n \ge n_0$ the right hand side will grow larger, thus the inequality will hold.
+		\end{description}
+		\item Because we have shown that the Big Oh Definition holds, the statement in question is valid.
+	\end{itemize}
+	
+	\section{Algorithm Design}
+	\subsection{Design}
+	\begin{verbatim}
+		max = Float.Min             // minimum value
+		k = lists.length
+		for i in 0 until k:         // k is the number of lists
+		sum = 0.0
+		z = lists[i].length
+		if z == 0:              // handle invariant: empty sublist
+		break
+		for j in 0 until z:     // z is the length of a sublist
+		sum += lists[i][j]
+		avg = sum / z
+		if avg > max:
+		max = avg
+		return max
+	\end{verbatim}
+	
+	\subsection{Argument for Correctness}
+	\textbf{Case: } Negatives
+	\begin{description}
+		\item[] \verb|max| is initialized to be the minimum float value, so negative averages will still be correctly compared.
+	\end{description}
+	\textbf{Case: } Only one input list
+	\begin{description}
+		\item[]  Even for a single list, the \verb|max| value will be overwritten by its calculated average.
+	\end{description}
+	\textbf{Case: } No sublists ($k = 0$)
+	\begin{description}
+		\item[] Returns the initialized value for the maximum average. Should be considered an invariant as calculating the maximum average of nothing is nonsensical.
+	\end{description}
+	\textbf{Case :} Empty sublist ($z = 0$)
+	\begin{description}
+		\item[] This case is handled by line 6, where empty sublists are broken out of early. Such sublists should not be considered when calculating the maximum average, as the average of nothing is nonsensical.
+	\end{description}
+	
+	\subsection{Proof of Correctness}
+	\textbf{Proof:} Using proof by invariance on the following loop invariant:
+	\begin{description}
+		\item[] At the start of each iteration for the loop in lines 2-12, the highest average calculated is stored.
+	\end{description}
+	\begin{itemize}
+		\item Before the first loop, the maximum average is stored as the minimum possible value, which is fine when considering it is the average of nothing.
+		\item During each iteration, the current list's average is compared to the previously stored maximum average. If the current average is higher than the maximum average, the maximum is instead set to the current average. This ensures that at the end of the loop (and the beginning of the next loop), the maximum average seen so far is stored inside of \verb|max|. 
+		\item When the loop ends, the maximum average has been compared across all lists and only the highest has been stored.
+	\end{itemize}
+	
+	\subsection{Exact Runtime Analysis}
+	\begin{verbatim}
+		max = Float.Min             <- 1
+		k = lists.length            <- 1
+		for i in 0 until k:         <- k
+		sum = 0.0                   <- 1
+		z = lists[i].length         <- 1
+		if z == 0:                  <- 1
+		break                   
+		for j in 0 until z:         <- z
+		sum += lists[i][j]          <- 1
+		avg = sum / z               <- 1
+		if avg > max:               <- 1
+		max = avg                   <- 1 if avg > max
+		return max
+	\end{verbatim}
+	The code defines $k$ as the number of rows and $z$ as the number of entries in a row, but we will instead use the question's definitions:
+	\begin{itemize}
+		\item \verb|number_of_rows|$=K$
+		\item \verb|number_of_entries_in_row_k|$=m_k$
+	\end{itemize}
+	Using the values marked throughout the algorithm, we can express the exact runtime as $2+6K+Km_k$.
+	
+	\subsection{Upper Bound}
+	With $n$ as the total number of entries across all rows, we can determine that the upper bound of the entries per row $m_k$ is $n$ and the upper bound of rows $K$ is also $n$ (one entry per row).
+	Therefore the upper bound expression for the runtime would become $n^2+6n+2$.
+	
+	\subsection{Big-Oh Expression}
+	By only considering the dominant growth factor, we get a Big-Oh expression of $O(n^2)$
+	
+	\subsection{Extra Credit Big Oh Proof}
+	\textbf{Proof:} The Big Oh Definition will be used to prove the validity of the derived Big-Oh expression.
+	\begin{itemize}
+		\item $f(n) = n^2+6n+2$
+		\item $g(n) = n^2$
+		\item Choose $n_0 = 5$ and $c = 3$
+		\item For all $n \ge n_0$ show both:
+		\begin{description}
+			\item[1.] $n^2+6n+2 \le c \cdot n^2$
+			\item[]   $1 + \frac{6}{n} + \frac{2}{n^2} \le c$
+			\item[]   $1 + \frac{6}{5} + \frac{2}{25} \le 3$
+			\item[]   $2\frac{13}{25} \le 3$
+			\item[]   As $n$ grows larger, the left hand side will approach 2, and so the inequality holds for all $n \ge n_0$.
+			\item[2.] $0 \le n^2+6n+2$
+			\item[]   $0 \le 5^2+6\cdot 5+2$
+			\item[]   $0 \le 57$
+			\item[]   As $n$ grows larger, the right hand side will approach infinity, and so the inequality holds for all $n \ge n_0$
+		\end{description}
+		\item Because we have shown that the Big Oh Definition holds, the statement in question is valid.
+	\end{itemize}
+	
+\end{document}
