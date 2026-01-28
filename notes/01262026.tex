@@ -1,0 +1,93 @@
+\documentclass[]{article}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{setspace}
+
+%title: Sorting
+
+\begin{document}
+
+\subsection{Properties of Sort Algorithms}
+\begin{itemize}
+	\item \textbf{Sort keys with satellite data:} Given a list of (key,data) records, sort the pairs by key.
+	\item \textbf{Stable sort:} Preserve order of multiple elements that have the same value
+	\item \textbf{In-place sort:} No need to allocate a new array to write the output to; Sort using the input array
+\end{itemize}
+
+\noindent\fbox{%
+	\parbox{\textwidth}{%
+		\vspace{.8em}
+		"in-place" is related to the question of space complexity. Regarding space complexity costs
+		\begin{itemize}
+			\item Space used for inputs comes for "free" (no cost).
+			\item Book keeping space is counted.
+			\item (If not in-place) space for the output is counted.
+		\end{itemize}
+	}%
+}
+
+\section{Counting Sort}
+	\textit{TODO: 01/22/26 lecture}
+	
+	
+\subsection{Stable Counting Sort}
+	\begin{verbatim}
+		count[k]: number of keys that fulfill (key == k)
+		pos[k]: number of keys that fulfill (key < k)
+		
+		# sort
+		for each (data, k) in inputs:
+		    out[pos[k]] = (data, k)
+		    pos[k]++
+	\end{verbatim}
+	Space complexity? $O(n+k)$ \hspace{1.3cm} Time complexity? $O(n+k)$
+	
+	
+\section{Radix Sort}
+	Idea: Sort keys digit-by-digit, start with \textbf{least-significant digit}.
+	\begin{verbatim}
+		# For n numbers with d digits (each digit has k values)
+		for i from 0 to d:
+		    stable sort on digit in place i from right
+	\end{verbatim}
+	\subsubsection*{space complexity?}
+	The space complexity of the stable sort algorithm.\\
+	For stable counting sort this is $O(n+k)$ since it is not an in-place algorithm.
+	\subsubsection*{time complexity?}
+	Run counting sort $d$ times.\\
+	$\Theta(d(n+k))$\\
+	for $n$ numbers with $d$ digits in range of $[1..k]$\\
+	\\
+	Considering $d$ a constant and assuming $k = O(n)$, radix sort runs in linear time!\\
+	(beats $\Theta(n$ log $n))$ of comparison sort!!)
+
+\section{Insertion Sort}
+	Idea: consider input elements in order.\\
+	Take the next element $A[i]$ and insert it at the right place among previous numbers.
+	
+	Space complexity? $O(n)$ \hspace{1.3cm} Time complexity? $O(n^2)$ 
+
+\section{Merge Sort}
+	'divide and conquer': divide, conquer, combine\\
+	Idea:
+	\vspace{-0.5em}
+	\begin{enumerate}
+		\itemsep0em 
+		\item split input into two segments (divide),
+		\item sort left segment by recursion (conquer),
+		\item sort right segment by recursion,
+		\item merge sorted segments (combine)
+	\end{enumerate}
+	
+	\noindent Anchor: Any list with a single element is already sorted.\par
+	Space complexity? $ $ \hspace{1.3cm} Time complexity? $O(n $ log $n)$
+	
+
+\section{Quicksort}
+
+\section{Partition}
+
+\section{Intro-Sort}
+
+
+\end{document}
