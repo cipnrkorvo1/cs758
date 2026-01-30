@@ -6,6 +6,8 @@
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 
+\newtheorem{theorem}{Theorem}
+
 \begin{document}
 	
 	\begin{center}
@@ -45,9 +47,80 @@
 	\end{definition}
 	
 	\begin{proof}
-		Let $F(n) = \text{max}(f(n), g(n))$ and $G(n) = (f(n) + g(n))$. To prove that $\Theta(G(n)) = F(n)$, we must show that Definition \ref{thetadef} holds.\\\\
-		
-		Choose $c_1 = 1, c_2 = 10, n_0 = 3$.
+		Because the max function and addition are both commutative, we can assume $f(n) \leq g(n)$ without loss of generality. Since both are asymptotically nonnegative, we can also assert $0 < f(n) \leq g(n)$ for all $n \geq n_0$. Using this inequality, we can simplify:
+		\begin{align}
+			\text{max}(f(n), g(n)) &= g(n)\\
+			f(n) + g(n) &= a \cdot g(n) \text{ where } 1 \leq a \leq 2
+		\end{align}
+		We can also operate on $(2)$ to get the following:
+		\begin{align}
+			f(n) + g(n) - g(n) &= a \cdot g(n) - g(n)\\
+			f(n) &= (a - 1)g(n)
+		\end{align}
+		and because $f(n) > 0$, $0 < (a-1) \leq 1$. Using multiplication and our inequality, we have
+		\begin{align}
+			0 < f(n) \leq g(n) \leq a \cdot g(n)\\
+			0 < (a-1)g(n) \leq g(n) \leq a \cdot g(n)
+		\end{align}
+		for all $n \geq n_0$.
+		Notice that $(6)$ is in the form that \ref{thetadef} requires. In addition, we have shown that $(a-1)$ and $a$ are positive constants and that the inequality holds for all $n \geq n_0$. If we substitute the original equations in question back into $(6)$, we get
+		\[
+			0 < f(n) \leq \text{max}(f(n) + g(n)) \leq f(n) + g(n)
+		\]
+		remembering that $f(n) \leq g(n)$. Thus, we have shown that \ref{thetadef} holds for the statement \[\text{max}(f(n), g(n)) = \Theta(f(n) + g(n))\]
+	\end{proof}
+	
+	\section{Problem 3-1, parts a, b, and c}
+	\begin{definition}
+		\label{odef}
+		$O(g(n)) = \{f(n) :$ there exist positive constants $c$ and $n_0$ such that $0 \leq f(n) \leq cg(n)$ for all $n \geq n_0\}$.
+	\end{definition}
+	\begin{definition}
+		\label{omegadef}
+		$\Omega(g(n)) = \{f(n) :$ there exist positive constants $c$ and $n_0$ such that $0 \leq cg(n) \leq f(n)$ for all $n \geq n_0 \}$.
+	\end{definition}
+	\begin{equation}
+		p(n) = a_dn^d + a_{d-1}n^{d-1} +...+ a_0
+	\end{equation}
+	\begin{theorem}
+		\label{limittheorem}
+		\begin{align}
+			\frac{p(n)}{n^d} &= \frac{a_dn^d + a_{d-1}n^{d-1} +...+ a_0}{n^d}\\
+			&= a_d + \frac{a_{d-1}}{n} +...+ \frac{a_0}{n^d}\\
+			\lim_{n \rightarrow \infty} \frac{p(n)}{n^d} &= a_d + 0 + ... + 0\\
+			\lim_{n \rightarrow \infty} p(n) &= a_dn^d
+		\end{align}
+	Thus, for sufficiently large $n$, the growth of $p(n)$ is dominated by its highest power term $n^d$.
+	\end{theorem}
+	\subsection*{3.a)}
+	\begin{proof}
+		Let $f(n) = p(n)$ and $g(n) = n^k$. Using the approximation derived in Theorem \ref{limittheorem}, $f(n) \approx a_dn^d$ for all $n \geq n_0$ where $n_0$ is sufficiently large. In addition, it is trivial that for all $k \geq d$, $xn^k \geq xn^d$ for all $n \geq 1$. Finally, as defined, $a_d > 0$ and so $a_dn^d > 0$ for all $n \geq n_0$. Thus,
+		\[
+			0 \leq a_dn^d \leq cn^k
+		\]
+		for all $k \geq d$ and any $c \geq a_d$ which satisfies the Big-Oh definition.
+	\end{proof}
+	
+	\subsection*{3.b)}
+	\begin{proof}
+		Let $f(n) = p(n)$ and $g(n) = n^k$. Using the approximation derived in Theorem \ref{limittheorem}, $f(n) \approx a_dn^d$ for all $n \geq n_0$ where $n_0$ is sufficiently large. In addition, it is trivial that for all $k \leq d$, $xn^k \leq xn^d$ for all $n \geq 1$. Finally, as defined, $a_d > 0$ and so $a_dn^d > 0$ for all $n \geq n_0$. Thus,
+		\[
+			0 \leq cn^k \leq a_dn^d
+		\]
+		for all $k \leq d$ and any $c \leq a_d$ which satisfies the Big-Omega definition.
+	\end{proof}
+	
+	\subsection*{3.c)}
+	\begin{proof}
+		Let $f(n) = p(n)$ and $g(n) = n^k$. Using the approximation derived in Theorem \ref{limittheorem}, $f(n) \approx a_dn^d$ for all $n \geq n_0$ where $n_0$ is sufficiently large. In addition, since $k = d$, $n^k = n^d$. Finally, as defined, $a_d > 0$ and so $a_dn^d > 0$ for all $n \geq n_0$. To fulfill the Big-Theta definition, we must find a $c_1$ and $c_2$ such that
+		\[
+			0 \leq c_1n^d \leq a_dn^d \leq c_2n^d
+		\]
+		If we divide the entire inequality by $a_dn^d$, we get
+		\[
+			0 \leq c_1 \leq a_d \leq c_2
+		\]
+		Thus, for any $0 \leq c_1 \leq a_d$ and $c_2 \geq a_d$, the Big-Theta definition is satisfied.
 	\end{proof}
 	
 
