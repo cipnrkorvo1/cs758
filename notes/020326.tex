@@ -1,0 +1,135 @@
+\documentclass[]{article}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{setspace, enumitem, multicol}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\begin{document}
+
+\section{Heaps}
+Heaps are good for:
+\begin{enumerate}[itemsep=1pt]
+	\item Finding the min in $\Theta(1)$
+	\item Finding the min with insertions
+	\item Finding the min with insertions and deletions
+	\item Finding the $k$th largest in $\Theta(k\log n)$
+\end{enumerate}
+\begin{center}
+	\textbf{Heap Invariant: parent is $\leq$ all children}
+\end{center}
+Different implementations:
+\begin{enumerate}
+	\itemsep1pt
+	\item balanced binary tree
+	\item balanced binary tree backed by an array
+	\item other trees/forests (e.g., binomial and Fibonacci heaps)
+\end{enumerate}
+
+\subsection{Binary Heap}
+A binary heap is a balanced binary tree that fulfills the heap invariant. Balanced means that leaves may only differ in height by one.\\
+Special case of binary heaps: add new leaves from left-to-right (in reading-order).\\
+\\
+Operations:
+\begin{enumerate}[itemsep=1pt]
+	\item Finding the min (easy -- it is the root!)
+	\item Insert new elements
+	\item Extract the min (delete/pop)
+\end{enumerate}
+\subsubsection{Insertion}
+\begin{itemize}
+	\itemsep1pt
+	\item Add as last leaf (first empty on last level, left-to-right)
+	\item Fix heap invariant moving up (until: at root or no fix)
+\end{itemize}
+One operation of insert takes at worst $O(\lg n)$ (word case: fix the branch from leaf insert position to the root).
+\subsubsection{Extract min (delete)}
+\begin{itemize}
+	\itemsep1pt
+	\item Replace root with last leaf (reading order).
+	\item Fix heap invariant moving down (the opposite of insert.)
+\end{itemize}
+Same runtime as insert, since it is the same operation just backwards.
+\subsection{Heap Sort}
+\begin{multicols}{2}
+\begin{enumerate}[itemsep=0pt,parsep=0pt]
+	\item insert all elements into the heap
+	\item while heap is not empty:
+	\item \quad $x$ = extract-min from heap
+	\item \quad emit $x$
+\end{enumerate}
+\columnbreak
+\begin{itemize}[itemsep=0pt,parsep=0pt]
+	\item[] Naive: $\Theta(n\log n)$
+	\item[] $\Theta(n)$
+	\item[] $\Theta(\log n)$
+	\item[] $\;$
+\end{itemize}
+\end{multicols}
+\noindent
+Runtime: $\Theta(n\log n)$\\
+Space: Naive $\Theta(n)$ -- can be done in $\Theta(1)$
+\subsubsection{Tree Represented by Array}
+\begin{itemize}[itemsep=0pt]
+	\item node $A[i]$ is at array index $i$
+	\item parent $i = \floor{\frac{i-1}{2}}$
+	\item left child of $i = 2i + 1$
+	\item right child of $i = 2i + 2$  
+\end{itemize}
+\noindent
+This naturally defines a binary balanced tree:\\
+add as last leaf $\Rightarrow$ place in first free slot in array\\
+$O(1)$ time/space: we use the array in which input was given\\
+\\
+parent(i) = $\floor{\frac{i-1}{2}}$\\
+Inserted node $i$ (value $A[i]$)\\
+If parent is larger, fix heap invariant by pulling $A[i]$ up.\\
+\\
+pullup($i$):
+\begin{enumerate}[itemsep=0pt,parsep=0pt]
+	\item if $A[i] < A[parent(i)]$ // violation
+	\item \quad exchange $A[i]$ with $A[parent(i)]$
+	\item \quad pullup($parent(i)$)
+\end{enumerate}
+\noindent
+analog: push down during extract min/delete\\\\
+
+\textbf{loop invariant:} "heap invariant holds for subtree rooted in $i$"
+\begin{itemize}[itemsep=0pt]
+	\item initialization: a tree consisting of just $i$ is sorted/holds heap invariant
+	\item maintenance: if $parent(i)$ violates heap invariant, swapping with $i$ solves it
+	\item termination: loop ends when $i$ is root or when $parent(i)$ does not violate heap invariant
+\end{itemize}
+\noindent
+Space complexity: $\Theta(1)$\\
+Time complexity: $\Theta(\lg n)$\\
+Inserting $n$ elements has runtime $\Theta(n \lg n)$
+\subsubsection{Resizing the Array}
+If the array becomes full, we resize by doubling the array. We can show that the runtime does not change because:\par
+Cost for occasional doubling (across $n$ elements) is in $O(n)$; No change in runtime for inserting $n$ elements, which is $O(n \lg n)$ because $O(n \lg n + n) = O(n \lg n)$\\
+\\
+Let $c_i = \begin{cases}
+	i & \text{if } i - 1 \text{ is a power of } 2\\
+	1 & \text{otherwise }
+\end{cases}
+$\\
+When power of two, we filled up the array and need to double.
+\begin{align*}
+	\sum_{i=1}^{n}c_i &\leq n + \sum_{j=0}^{\lg n}2^j\\
+	&< n + 2n\\
+	&< 3n
+\end{align*}
+So, total cost is upper bounded by $O(n)$
+\subsubsection{Heap Construction}
+Using the Tree Represented by Array, build heap bottom-up from unsorted list of $n$ elements.
+\begin{enumerate}[itemsep=0pt,parsep=0pt]
+	\item copy elements into array $A$
+	\item for $i$ from $\frac{length}{2}-1$ down to $0$
+	\item \quad pushdown($i$)
+\end{enumerate}
+
+
+\end{document}
